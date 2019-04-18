@@ -14,13 +14,15 @@ public class DuckHunt extends ApplicationAdapter {
 	Texture img;
 	Sound sound;
 	Pixmap pm;
+	Duck d;
 	
 	@Override
 	public void create () {
 		batch = new SpriteBatch();
-		img = new Texture("back.png");
-		sound = Gdx.audio.newSound(Gdx.files.internal("shot.wav"));
-		pm = new Pixmap(Gdx.files.internal("cursor.png"));
+		img = new Texture("background/back.png");
+		sound = Gdx.audio.newSound(Gdx.files.internal("sound/shot.wav"));
+		pm = new Pixmap(Gdx.files.internal("mouse/cursor.png"));
+		d = new Duck();
 		Gdx.graphics.setCursor(Gdx.graphics.newCursor(pm, 0, 0));
 	}
 
@@ -32,7 +34,9 @@ public class DuckHunt extends ApplicationAdapter {
 			System.exit(0);
 		if(Gdx.input.isButtonPressed(Input.Buttons.LEFT))
 			sound.play();
+		d.move();
 		batch.begin();
+		batch.draw(d.getFrame(), d.getX(), d.getY());
 		batch.draw(img, 0, 0);
 		batch.end();
 	}
