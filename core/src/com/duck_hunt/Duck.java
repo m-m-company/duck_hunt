@@ -7,14 +7,18 @@ import com.badlogic.gdx.utils.Queue;
 
 public class Duck {
 	
+	private final static int VELOCITY = 50;
 	private final static int RIGHT = 0;
 	private final static int LEFT = 1;
 	private final static int TOP_LEFT = 2;
 	private final static int TOP_RIGHT = 3;
+	private final static int LOWER_LEFT = 4;
+	private final static int LOWER_RIGHT = 5;
 	
-	private String directions[] = {"right", "left", "topRight", "topLeft"};
+	private String directions[] = {"right", "left", "topLeft", "topRight", "lowerLeft", "lowerRight"};
 	private Queue<Texture> animations;
 	private Texture frame;
+	private float delayAnimation;
 	private int direction;
 	private float x;
 	private float originY;
@@ -22,10 +26,14 @@ public class Duck {
 	private boolean isBorn;
 	private boolean isDead;
 	
-	private void loadAnimations(int dir) {
+	private void selectDirection(Random r) {
+		direction = r.nextInt(directions.length);
+	}
+	
+	private void loadAnimations() {
 		animations = new Queue<Texture>();
 		for(int i = 0; i < 3; ++i)
-			animations.addLast(new Texture("duck/" + directions[dir] + i + ".png"));
+			animations.addLast(new Texture("duck/" + directions[direction] + i + ".png"));
 		frame = animations.first();
 	}
 	
@@ -34,14 +42,15 @@ public class Duck {
 		originY = Background.MINIMUM_Y;
 		Random r = new Random();
 		x = r.nextInt(Background.MAXIMUM_X);
-		y = r.nextInt(Background.MAXIMUM_Y);//fix the y
+		y = r.nextInt(Background.MAXIMUM_Y - 100);
 		while(y < Background.MINIMUM_Y)
-			y = r.nextInt(Background.MAXIMUM_Y);
-		direction = r.nextInt(directions.length);
-		loadAnimations(direction);
+			y = r.nextInt(Background.MAXIMUM_Y - 100);
+		selectDirection(r);
+		loadAnimations();
 	}
 	
 	public Duck() {
+		delayAnimation = 0.0f;
 		isDead = false;
 		spawn();
 	}
@@ -69,32 +78,67 @@ public class Duck {
 		if(!isBorn) {
 			switch(direction) {
 				case Duck.RIGHT:
-					x += Gdx.graphics.getDeltaTime();
+					if(x >= Background.MAXIMUM_X) {
+						selectDirection(new Random());
+						loadAnimations();
+					}
+					x += Gdx.graphics.getDeltaTime()*Duck.VELOCITY;
 					break;
 				case Duck.LEFT:
-					x -= Gdx.graphics.getDeltaTime();
+					if(x <= Background.MINIMUM_X) {
+						selectDirection(new Random());
+						loadAnimations();
+					}
+					x -= Gdx.graphics.getDeltaTime()*Duck.VELOCITY;
 					break;
 				case Duck.TOP_LEFT:
-					x -= Gdx.graphics.getDeltaTime();
-					y += Gdx.graphics.getDeltaTime();
+					if(x <= Background.MINIMUM_X || x >= Background.MAXIMUM_Y) {
+						selectDirection(new Random());
+						loadAnimations();
+					}
+					x -= Gdx.graphics.getDeltaTime()*Duck.VELOCITY;
+					y += Gdx.graphics.getDeltaTime()*Duck.VELOCITY;
 					break;
 				case Duck.TOP_RIGHT:
-					x += Gdx.graphics.getDeltaTime();
-					y += Gdx.graphics.getDeltaTime();
+					if(x >= Background.MAXIMUM_X || x >= Background.MAXIMUM_Y) {
+						selectDirection(new Random());
+						loadAnimations();
+					}
+					x += Gdx.graphics.getDeltaTime()*Duck.VELOCITY;
+					y += Gdx.graphics.getDeltaTime()*Duck.VELOCITY;
+					break;
+				case Duck.LOWER_LEFT:
+					if(x <= Background.MINIMUM_X || y <= Background.MINIMUM_Y + 20) {
+						selectDirection(new Random());
+						loadAnimations();
+					}
+					x -= Gdx.graphics.getDeltaTime()*Duck.VELOCITY;
+					y -= Gdx.graphics.getDeltaTime()*Duck.VELOCITY;
+					break;
+				case Duck.LOWER_RIGHT:
+					if(x >= Background.MAXIMUM_X || y <= Background.MINIMUM_Y) {
+						selectDirection(new Random());
+						loadAnimations();
+					}
+					x += Gdx.graphics.getDeltaTime()*Duck.VELOCITY;
+					y -= Gdx.graphics.getDeltaTime()*Duck.VELOCITY;
 					break;
 				default:
 					System.out.println("ERROR");
 					break;
 			}
-			switchAnimation();
 		}
 		else {
 			if(originY < y) {
-				originY += Gdx.graphics.getDeltaTime()*200;
-				System.out.println(originY + " " + y);
+				originY += Gdx.graphics.getDeltaTime()*Duck.VELOCITY;
 			}
 			else
 				isBorn = false;
+		}
+		delayAnimation += (float)Duck.VELOCITY/200;
+		if(delayAnimation > 2) {
+			switchAnimation();
+			delayAnimation = 0.0f;
 		}
 	}
 	
@@ -108,14 +152,14 @@ public class Duck {
 	}
 	
 	public boolean fall() {//restituisce true se deve ancora cadere
-		y -= Gdx.graphics.getDeltaTime();
+		y -= Gdx.graphics.getDeltaTime()*Duck.VELOCITY;
 		if(y > Background.MAXIMUM_Y)
 			return false;
 		return true;
 	}
 	
 	public Texture getFallAnimation() {
-		if(direction == Duck.LEFT || direction == Duck.TOP_LEFT)
+		if(direction == Duck.LEFT || direction == Duck.TOP_LEFT || direction == Duck.LOWER_LEFT)
 			return new Texture("duck/fallLeft.png");
 		else
 			return new Texture("duck/fallRight.png");

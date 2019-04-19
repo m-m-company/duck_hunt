@@ -32,11 +32,21 @@ public class DuckHunt extends ApplicationAdapter {
 		Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
 		if(Gdx.input.isKeyJustPressed(Input.Keys.ESCAPE))
 			System.exit(0);
-		if(Gdx.input.isButtonPressed(Input.Buttons.LEFT))
+		if(Gdx.input.isButtonPressed(Input.Buttons.LEFT)) {
 			sound.play();
-		d.move();
+			batch.begin();
+			batch.draw(d.getDeathAnimation(), d.getX(), d.getY());
+			batch.end();
+		}
+		if(d.isDead())
+			d.fall();
+		else
+			d.move();
 		batch.begin();
-		batch.draw(d.getFrame(), d.getX(), d.getY());
+		if(d.isDead())
+			batch.draw(d.getFallAnimation(), d.getX(), d.getY());
+		else
+			batch.draw(d.getFrame(), d.getX(), d.getY());
 		batch.draw(img, 0, 0);
 		batch.end();
 	}
