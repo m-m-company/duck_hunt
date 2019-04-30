@@ -8,6 +8,7 @@ import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.Pixmap;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
+import com.duck.Duck;
 
 public class DuckHunt extends ApplicationAdapter {
 	SpriteBatch batch;
@@ -44,7 +45,7 @@ public class DuckHunt extends ApplicationAdapter {
 			d.move();
 		batch.begin();
 		if(d.isDead())
-			batch.draw(d.getFallAnimation(), d.getX(), d.getY());
+			batch.draw(d.fallAnimation(), d.getX(), d.getY());
 		else
 			batch.draw(d.getFrame(), d.getX(), d.getY());
 		batch.draw(img, 0, 0);
