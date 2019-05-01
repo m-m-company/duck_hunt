@@ -38,7 +38,7 @@ public class Duck {
 		y = r.nextInt(Background.MAXIMUM_Y - 100);
 		while(y < Background.MINIMUM_Y)
 			y = r.nextInt(Background.MAXIMUM_Y - 100);
-		selectDirection(r);
+		direction = r.nextInt(4);
 		g.setAnimations(direction);
 	}
 	
@@ -152,6 +152,10 @@ public class Duck {
 	
 	public Texture fallAnimation() {
 		return g.fallAnimation(direction);
+	}
+	
+	public boolean collide(float x, float y) {
+		return x >= this.x && x <= this.x+75 && y >= this.y && y <= this.y+75;
 	}
 
 }
