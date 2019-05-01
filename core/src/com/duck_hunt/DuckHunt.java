@@ -1,61 +1,53 @@
 package com.duck_hunt;
 
+import com.background.Background;
 import com.badlogic.gdx.ApplicationAdapter;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input;
-import com.badlogic.gdx.audio.Sound;
-import com.badlogic.gdx.graphics.GL20;
-import com.badlogic.gdx.graphics.Pixmap;
-import com.badlogic.gdx.graphics.Texture;
-import com.badlogic.gdx.graphics.g2d.SpriteBatch;
+import com.duck.Duck;
+import com.graphicManager.GraphicManager;
+import com.sound.SoundManager;
 
 public class DuckHunt extends ApplicationAdapter {
-	SpriteBatch batch;
-	Texture img;
-	Sound sound;
-	Pixmap pm;
-	Duck d;
+	
+	GraphicManager graphic;
+	SoundManager sound;
+	Background background;
+	Duck duck;
+	double rechargeTime;
 	
 	@Override
 	public void create () {
-		batch = new SpriteBatch();
-		img = new Texture("background/back.png");
-		sound = Gdx.audio.newSound(Gdx.files.internal("sound/shot.wav"));
-		pm = new Pixmap(Gdx.files.internal("mouse/cursor.png"));
-		d = new Duck();
-		Gdx.graphics.setCursor(Gdx.graphics.newCursor(pm, 0, 0));
+		graphic = new GraphicManager();
+		sound = new SoundManager();
+		background = new Background();
+		duck = new Duck();
+		rechargeTime = 0.0d;
 	}
 
 	@Override
 	public void render () {
-		Gdx.gl.glClearColor(1, 1, 1, 1);
-		Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
+		graphic.clearDisplay();
 		if(Gdx.input.isKeyJustPressed(Input.Keys.ESCAPE))
-			System.exit(0);
-		if(Gdx.input.isButtonPressed(Input.Buttons.LEFT)) {
-			sound.play();
-			batch.begin();
-			batch.draw(d.getDeathAnimation(), d.getX(), d.getY());
-			batch.end();
+			Gdx.app.exit();
+		rechargeTime += Gdx.graphics.getDeltaTime();
+		if(Gdx.input.isButtonPressed(Input.Buttons.LEFT) && rechargeTime > 2.1d) {//do I like this sound shot?
+			sound.playShot();
+			rechargeTime = 0.0d;
+			//graphic.drawDeathAnimation(duck);
 		}
-		if(d.isDead())
-			d.fall();
+		if(duck.isDead())
+			duck.fall();
 		else
-			d.move();
-		batch.begin();
-		if(d.isDead())
-			batch.draw(d.getFallAnimation(), d.getX(), d.getY());
-		else
-			batch.draw(d.getFrame(), d.getX(), d.getY());
-		batch.draw(img, 0, 0);
-		batch.end();
+			duck.move();
+		graphic.drawDuck(duck);
+		graphic.drawBack(background);
 	}
 	
 	@Override
 	public void dispose () {
-		batch.dispose();
-		img.dispose();
+		graphic.dispose();
 		sound.dispose();
-		pm.dispose();
+		background.dispose();
 	}
 }
