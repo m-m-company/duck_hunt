@@ -1,9 +1,10 @@
 package com.duck;
 
 import java.util.Random;
+
+import com.background.Background;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.Texture;
-import com.duck_hunt.Background;
 
 public class Duck {
 	
