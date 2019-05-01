@@ -13,16 +13,16 @@ public class DuckHunt extends ApplicationAdapter {
 	GraphicManager graphic;
 	SoundManager sound;
 	Background background;
-	Duck[] ducks = new Duck[4];
+	Duck duck;
+	double rechargeTime;
 	
 	@Override
 	public void create () {
 		graphic = new GraphicManager();
 		sound = new SoundManager();
 		background = new Background();
-		for(int i = 0; i < 4; ++i) {
-			ducks[i] = new Duck();
-		}
+		duck = new Duck();
+		rechargeTime = 0.0d;
 	}
 
 	@Override
@@ -30,17 +30,17 @@ public class DuckHunt extends ApplicationAdapter {
 		graphic.clearDisplay();
 		if(Gdx.input.isKeyJustPressed(Input.Keys.ESCAPE))
 			Gdx.app.exit();
-		if(Gdx.input.isButtonPressed(Input.Buttons.LEFT)) {
+		rechargeTime += Gdx.graphics.getDeltaTime();
+		if(Gdx.input.isButtonPressed(Input.Buttons.LEFT) && rechargeTime > 2.1d) {//do I like this sound shot?
 			sound.playShot();
+			rechargeTime = 0.0d;
 			//graphic.drawDeathAnimation(duck);
 		}
-		for(Duck d : ducks) {
-			if(d.isDead())
-				d.fall();
-			else
-				d.move();
-			graphic.drawDuck(d);
-		}
+		if(duck.isDead())
+			duck.fall();
+		else
+			duck.move();
+		graphic.drawDuck(duck);
 		graphic.drawBack(background);
 	}
 	
