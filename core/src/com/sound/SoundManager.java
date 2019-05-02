@@ -14,8 +14,8 @@ public class SoundManager {
 		background = Gdx.audio.newSound(Gdx.files.internal("sound/background.mp3"));
 		background.loop();
 		shot = Gdx.audio.newSound(Gdx.files.internal("sound/shot.wav"));
-		death = Gdx.audio.newSound(Gdx.files.internal("sound/death.wav"));
-		quack = Gdx.audio.newSound(Gdx.files.internal("sound/quack.mp3")); 
+		death = Gdx.audio.newSound(Gdx.files.internal("sound/death.mp3"));
+		quack = Gdx.audio.newSound(Gdx.files.internal("sound/quack.mp3"));
 	}
 	
 	public void playShot() {
@@ -27,7 +27,7 @@ public class SoundManager {
 	}
 	
 	public void playQuack() {
-		quack.play();
+		quack.play(2);
 	}
 	
 	public void dispose() {

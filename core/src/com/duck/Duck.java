@@ -25,6 +25,8 @@ public class Duck {
 	private boolean isDead;
 	private double delayAnimation;
 	private double delayChangeAnimation;
+	private int quack;
+	public double delayQuack = 0.0d;
 	
 	private void selectDirection(Random r) {
 		direction = r.nextInt(g.getMaximumDirections());
@@ -39,10 +41,13 @@ public class Duck {
 		while(y < Background.MINIMUM_Y)
 			y = r.nextInt(Background.MAXIMUM_Y - 100);
 		direction = r.nextInt(4);
+		while(direction < 2)
+			direction = r.nextInt(4);
 		g.setAnimations(direction);
 	}
 	
 	public Duck() {
+		quack = 1;
 		delayAnimation = 0.0;
 		delayChangeAnimation = 0.0;
 		g = new DuckGraphic();
@@ -128,7 +133,9 @@ public class Duck {
 				isBorn = false;
 		}
 		delayAnimation += (double)Duck.VELOCITY/200;
-		if(delayAnimation > 2) {
+		if(delayAnimation > 5.0f) {
+			if(++quack > 3)
+				quack = 1;
 			g.switchAnimation();
 			delayAnimation = 0.0f;
 		}
@@ -139,13 +146,18 @@ public class Duck {
 		return g.getHitted();
 	}
 	
+	public boolean isQuacking() {
+		return quack == 2;
+	}
+	
 	public boolean isDead() {
 		return isDead;
 	}
 	
 	public boolean fall() {//restituisce true se deve ancora cadere
+		quack = 0;
 		y -= Gdx.graphics.getDeltaTime()*Duck.VELOCITY;
-		if(y > Background.MAXIMUM_Y)
+		if(y > Background.MINIMUM_Y - 40)
 			return false;
 		return true;
 	}

@@ -2,20 +2,32 @@ package com.graphicManager;
 
 import com.background.Background;
 import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.Pixmap;
+import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
+import com.badlogic.gdx.graphics.g2d.freetype.FreeTypeFontGenerator;
 import com.duck.Duck;
 
 public class GraphicManager {
 	
 	private SpriteBatch batch;
 	private Pixmap pm;
+	private FreeTypeFontGenerator generator;
+    private FreeTypeFontGenerator.FreeTypeFontParameter parameter;
+    private BitmapFont font;
 	
 	public GraphicManager() {
 		batch = new SpriteBatch();
 		pm = new Pixmap(Gdx.files.internal("mouse/cursor.png"));
 		Gdx.graphics.setCursor(Gdx.graphics.newCursor(pm, 0, 0));
+		generator = new FreeTypeFontGenerator(Gdx.files.internal("background/font.otf"));
+		parameter = new FreeTypeFontGenerator.FreeTypeFontParameter();
+		font = new BitmapFont();
+		parameter.size = 48;
+        parameter.color = Color.BLACK;
+        parameter.flip = true;
 	}
 	
 	public void clearDisplay() {
@@ -38,10 +50,13 @@ public class GraphicManager {
 		batch.end();
 	}
 	
-	public void drawBack(Background background) {
+	public void drawBack(Background background, int score) {
 		batch.begin();
 		batch.draw(background.getBack(), 0, 0);
+		font = generator.generateFont(parameter);
+		font.draw(batch, Integer.toString(score), Background.MAXIMUM_X/2, Background.MAXIMUM_Y);
 		batch.end();
+		font.dispose();
 	}
 	
 	public void dispose() {

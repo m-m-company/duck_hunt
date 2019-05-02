@@ -1,5 +1,7 @@
 package com.duck_hunt;
 
+import java.util.ArrayList;
+
 import com.background.Background;
 import com.badlogic.gdx.ApplicationAdapter;
 import com.badlogic.gdx.Gdx;
@@ -10,21 +12,29 @@ import com.sound.SoundManager;
 
 public class DuckHunt extends ApplicationAdapter {
 	
+	final static int STAGE_1 = 100;
+	final static int STAGE_2 = 300;
+	final static int STAGE_3 = 600;
+	final static int STAGE_4 = 1000;
+	
+	double rechargeTime;
+	int score;
+	int dead;
 	GraphicManager graphic;
 	SoundManager sound;
 	Background background;
-	Duck duck;
-	double rechargeTime;
-	double delayQuack;
+	ArrayList<Duck> ducks;
 	
 	@Override
 	public void create () {
+		rechargeTime = 0.0d;
+		score = 0;
+		dead = 0;
 		graphic = new GraphicManager();
 		sound = new SoundManager();
 		background = new Background();
-		duck = new Duck();
-		rechargeTime = 0.0d;
-		delayQuack = 0.0d;
+		ducks = new ArrayList<Duck>();
+		createDucks();
 	}
 
 	@Override
@@ -34,26 +44,54 @@ public class DuckHunt extends ApplicationAdapter {
 			Gdx.app.exit();
 		rechargeTime += Gdx.graphics.getDeltaTime();
 		if(Gdx.input.isButtonPressed(Input.Buttons.LEFT) && rechargeTime > 2.1d) {//do I like this sound shot?
-			System.out.println(Gdx.input.getX() + " " + Gdx.input.getY());
-			System.out.println(duck.getX() + " " + duck.getY());
 			sound.playShot();
 			rechargeTime = 0.0d;
-			if(duck.collide(Gdx.input.getX() + 32, Gdx.graphics.getHeight() - 32 - Gdx.input.getY())) {
-				graphic.drawDeathAnimation(duck);
-				sound.playDeath();
+			for(int i = 0; i < ducks.size(); ++i) {
+				if(ducks.get(i).collide(Gdx.input.getX() + 32, Gdx.graphics.getHeight() - 32 - Gdx.input.getY())) {
+					score += 20;
+					graphic.drawDeathAnimation(ducks.get(i));
+					sound.playDeath();
+				}
 			}
 		}
-		if(duck.isDead())
-			duck.fall();
-		else
-			duck.move();
-		graphic.drawDuck(duck);
-		delayQuack += Gdx.graphics.getDeltaTime();
-		if(delayQuack > 1.2d) {
-			delayQuack = 0.0d;
-			sound.playQuack();
+		for(int i = 0; i < ducks.size(); ++i) {
+			graphic.drawDuck(ducks.get(i));
+			ducks.get(i).delayQuack += Gdx.graphics.getDeltaTime();
+			if(ducks.get(i).isQuacking() && ducks.get(i).delayQuack > 0.5d) {
+				sound.playQuack();
+				ducks.get(i).delayQuack = 0.0d;
+			}
+			if(ducks.get(i).isDead()) {
+				if(ducks.get(i).fall())
+					ducks.remove(i--);
+			}
+			else
+				ducks.get(i).move();
 		}
-		graphic.drawBack(background);
+		if(ducks.isEmpty())
+			createDucks();
+		graphic.drawBack(background, score);
+	}
+	
+	public void createDucks() {
+		if(score >= 0 && score <= DuckHunt.STAGE_1) {
+			ducks.add(new Duck());
+		}
+		else if(score > DuckHunt.STAGE_1 && score <= DuckHunt.STAGE_2) {
+			ducks.add(new Duck());
+			ducks.add(new Duck());
+		}
+		else if(score > DuckHunt.STAGE_2 && score <= DuckHunt.STAGE_3) {
+			ducks.add(new Duck());
+			ducks.add(new Duck());
+			ducks.add(new Duck());
+		}
+		else if(score > DuckHunt.STAGE_3 && score <= DuckHunt.STAGE_4) {
+			ducks.add(new Duck());
+			ducks.add(new Duck());
+			ducks.add(new Duck());
+			ducks.add(new Duck());
+		}
 	}
 	
 	@Override
