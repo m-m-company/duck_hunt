@@ -22,12 +22,11 @@ public class GraphicManager {
 		batch = new SpriteBatch();
 		pm = new Pixmap(Gdx.files.internal("mouse/cursor.png"));
 		Gdx.graphics.setCursor(Gdx.graphics.newCursor(pm, 0, 0));
-		generator = new FreeTypeFontGenerator(Gdx.files.internal("background/font.otf"));
+		generator = new FreeTypeFontGenerator(Gdx.files.internal("background/font.ttf"));
 		parameter = new FreeTypeFontGenerator.FreeTypeFontParameter();
 		font = new BitmapFont();
-		parameter.size = 48;
+		parameter.size = 40;
         parameter.color = Color.BLACK;
-        parameter.flip = true;
 	}
 	
 	public void clearDisplay() {

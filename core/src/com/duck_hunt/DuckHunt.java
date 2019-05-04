@@ -44,10 +44,15 @@ public class DuckHunt extends ApplicationAdapter {
 			Gdx.app.exit();
 		rechargeTime += Gdx.graphics.getDeltaTime();
 		if(Gdx.input.isButtonPressed(Input.Buttons.LEFT) && rechargeTime > 2.1d) {//do I like this sound shot?
+			float x = Gdx.input.getX()+32;
+			float y = Gdx.graphics.getHeight() - 32 -Gdx.input.getY();
+			System.out.println(x + " " + y);
 			sound.playShot();
 			rechargeTime = 0.0d;
 			for(int i = 0; i < ducks.size(); ++i) {
-				if(ducks.get(i).collide(Gdx.input.getX() + 32, Gdx.graphics.getHeight() - 32 - Gdx.input.getY())) {
+				System.out.println(ducks.get(i).getX() + " " + ducks.get(i).getY());
+				if(ducks.get(i).collide(x, y)) {
+					System.out.println("in");
 					score += 20;
 					graphic.drawDeathAnimation(ducks.get(i));
 					sound.playDeath();

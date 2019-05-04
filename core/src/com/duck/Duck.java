@@ -8,6 +8,7 @@ import com.badlogic.gdx.graphics.Texture;
 
 public class Duck {
 	
+	final static int MAXIMUM_Y = Background.MAXIMUM_Y - 95;
 	final static int VELOCITY = 50;
 	final static int RIGHT = 0;
 	final static int LEFT = 1;
@@ -91,7 +92,7 @@ public class Duck {
 			if(direction == Duck.TOP_LEFT) {
 				x -= Gdx.graphics.getDeltaTime()*Duck.VELOCITY;
 				y += Gdx.graphics.getDeltaTime()*Duck.VELOCITY;
-				if((x <= Background.MINIMUM_X || y >= Background.MAXIMUM_Y) && delayChangeAnimation > 4) {
+				if((x <= Background.MINIMUM_X || y >= Duck.MAXIMUM_Y) && delayChangeAnimation > 4) {
 					selectDirection(new Random());
 					g.setAnimations(direction);
 					delayChangeAnimation = 0.0;
@@ -100,7 +101,7 @@ public class Duck {
 			if(direction == Duck.TOP_RIGHT) {
 				x += Gdx.graphics.getDeltaTime()*Duck.VELOCITY;
 				y += Gdx.graphics.getDeltaTime()*Duck.VELOCITY;
-				if((x >= Background.MAXIMUM_X || y >= Background.MAXIMUM_Y) && delayChangeAnimation > 4) {
+				if((x >= Background.MAXIMUM_X || y >= Duck.MAXIMUM_Y) && delayChangeAnimation > 4) {
 					selectDirection(new Random());
 					g.setAnimations(direction);
 					delayChangeAnimation = 0.0;
@@ -156,7 +157,13 @@ public class Duck {
 	
 	public boolean fall() {//restituisce true se deve ancora cadere
 		quack = 0;
-		y -= Gdx.graphics.getDeltaTime()*Duck.VELOCITY;
+		if(isBorn) {
+			originY -= Gdx.graphics.getDeltaTime()*Duck.VELOCITY*2;
+			if(originY > Background.MINIMUM_Y - 40)
+				return false;
+			return true;
+		}
+		y -= Gdx.graphics.getDeltaTime()*Duck.VELOCITY*2;
 		if(y > Background.MINIMUM_Y - 40)
 			return false;
 		return true;
@@ -167,6 +174,8 @@ public class Duck {
 	}
 	
 	public boolean collide(float x, float y) {
+		if(isBorn)
+			return x >= this.x && x <= this.x+75 && y >= this.originY && y <= this.originY+75;
 		return x >= this.x && x <= this.x+75 && y >= this.y && y <= this.y+75;
 	}
 
