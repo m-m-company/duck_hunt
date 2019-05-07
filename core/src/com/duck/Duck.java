@@ -29,6 +29,15 @@ public class Duck {
 	private int quack;
 	public double delayQuack = 0.0d;
 	
+	public Duck() {
+		quack = 1;
+		delayAnimation = 0.0;
+		delayChangeAnimation = 0.0;
+		g = new DuckGraphic();
+		isDead = false;
+		spawn();
+	}
+	
 	private void selectDirection(Random r) {
 		direction = r.nextInt(g.getMaximumDirections());
 	}
@@ -45,15 +54,6 @@ public class Duck {
 		while(direction < 2)
 			direction = r.nextInt(4);
 		g.setAnimations(direction);
-	}
-	
-	public Duck() {
-		quack = 1;
-		delayAnimation = 0.0;
-		delayChangeAnimation = 0.0;
-		g = new DuckGraphic();
-		isDead = false;
-		spawn();
 	}
 	
 	public Texture getFrame() {
@@ -171,12 +171,6 @@ public class Duck {
 	
 	public Texture fallAnimation() {
 		return g.fallAnimation(direction);
-	}
-	
-	public boolean collide(float x, float y) {
-		if(isBorn)
-			return x >= this.x && x <= this.x+75 && y >= this.originY && y <= this.originY+75;
-		return x >= this.x && x <= this.x+75 && y >= this.y && y <= this.y+75;
 	}
 
 }
