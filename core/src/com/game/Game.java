@@ -1,4 +1,4 @@
-package com.duck_hunt;
+package com.game;
 
 import java.util.ArrayList;
 
@@ -10,16 +10,18 @@ import com.duck.Duck;
 import com.graphicManager.GraphicManager;
 import com.sound.SoundManager;
 
-public class DuckHunt extends ApplicationAdapter {
+public class Game extends ApplicationAdapter {
 	
 	final static int STAGE_1 = 100;
 	final static int STAGE_2 = 300;
 	final static int STAGE_3 = 600;
 	final static int STAGE_4 = 1000;
+	public final static int AMMO = 6;
 	
 	double rechargeTime;
 	int score;
 	int dead;
+	int ammo;
 	GraphicManager graphic;
 	SoundManager sound;
 	Background background;
@@ -30,6 +32,7 @@ public class DuckHunt extends ApplicationAdapter {
 		rechargeTime = 0.0d;
 		score = 0;
 		dead = 0;
+		ammo = Game.AMMO;
 		graphic = new GraphicManager();
 		sound = new SoundManager();
 		background = new Background();
@@ -40,13 +43,7 @@ public class DuckHunt extends ApplicationAdapter {
 	@Override
 	public void render () {
 		graphic.clearDisplay();
-		if(Gdx.input.isKeyJustPressed(Input.Keys.ESCAPE))
-			Gdx.app.exit();
-		rechargeTime += Gdx.graphics.getDeltaTime();
-		if(Gdx.input.isButtonPressed(Input.Buttons.LEFT) && rechargeTime > 2.1d) {//do I like this sound shot?
-			sound.playShot();
-			rechargeTime = 0.0d;
-		}
+		this.inputControl();
 		for(int i = 0; i < ducks.size(); ++i) {
 			graphic.drawDuck(ducks.get(i));
 			ducks.get(i).delayQuack += Gdx.graphics.getDeltaTime();
@@ -54,7 +51,11 @@ public class DuckHunt extends ApplicationAdapter {
 				sound.playQuack();
 				ducks.get(i).delayQuack = 0.0d;
 			}
-			if(ducks.get(i).isDead()) {
+			if(ducks.get(i).isDead() && ducks.get(i).hit < 0.4) {
+				ducks.get(i).hit += Gdx.graphics.getDeltaTime();
+				graphic.drawDuckHitted(ducks.get(i));
+			}
+			else if(ducks.get(i).isDead()) {
 				if(ducks.get(i).fall())
 					ducks.remove(i--);
 			}
@@ -63,27 +64,55 @@ public class DuckHunt extends ApplicationAdapter {
 		}
 		if(ducks.isEmpty())
 			createDucks();
-		graphic.drawBack(background, score);
+		graphic.drawBack(background, score, ammo);
 	}
 	
 	public void createDucks() {
-		if(score >= 0 && score <= DuckHunt.STAGE_1) {
+		if(score >= 0 && score <= Game.STAGE_1) {
 			ducks.add(new Duck());
 		}
-		else if(score > DuckHunt.STAGE_1 && score <= DuckHunt.STAGE_2) {
-			ducks.add(new Duck());
-			ducks.add(new Duck());
-		}
-		else if(score > DuckHunt.STAGE_2 && score <= DuckHunt.STAGE_3) {
-			ducks.add(new Duck());
+		else if(score > Game.STAGE_1 && score <= Game.STAGE_2) {
 			ducks.add(new Duck());
 			ducks.add(new Duck());
 		}
-		else if(score > DuckHunt.STAGE_3 && score <= DuckHunt.STAGE_4) {
+		else if(score > Game.STAGE_2 && score <= Game.STAGE_3) {
+			ducks.add(new Duck());
+			ducks.add(new Duck());
+			ducks.add(new Duck());
+		}
+		else if(score > Game.STAGE_3 && score <= Game.STAGE_4) {
 			ducks.add(new Duck());
 			ducks.add(new Duck());
 			ducks.add(new Duck());
 			ducks.add(new Duck());
+		}
+	}
+	
+	public void inputControl() {
+		if(Gdx.input.isKeyJustPressed(Input.Keys.ESCAPE))
+			Gdx.app.exit();
+		rechargeTime += Gdx.graphics.getDeltaTime();
+		if(Gdx.input.isButtonPressed(Input.Buttons.LEFT) && rechargeTime > 1.1d) {//do I like this sound shot?
+			if(ammo > 0) {
+				--ammo;
+				float x = (Gdx.input.getX() + 32)*graphic.getFactorWidth();
+				float y = (Gdx.graphics.getHeight() - 32 - Gdx.input.getY())*graphic.getFactorHeight();
+				for(Duck d : ducks) {
+					//System.out.println("paperella X = " + d.getX() + " Y = " + d.getY());
+					//System.out.println("mouse X = " + x + " Y = " + y);
+					if(d.collide(x, y)) {
+						score += 20;
+						d.setDead(true);
+						sound.playDeath();
+					}
+				}
+				sound.playShot();
+				rechargeTime = 0.0d;
+			}
+			else if(rechargeTime > 1.1d) {
+				rechargeTime = 0.0d;
+				sound.playFailedShot();
+			}
 		}
 	}
 	
