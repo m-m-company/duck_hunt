@@ -9,9 +9,9 @@ import com.badlogic.gdx.graphics.Texture;
 public class Duck {
 	
 	final static int MAXIMUM_Y = Background.MAXIMUM_Y - 95;
-	final static int VELOCITY = 50;
 	final static int RIGHT = 0;
 	final static int LEFT = 1;
+	final static int START_VELOCITY = 50;
 	final static int TOP_LEFT = 2;
 	final static int TOP_RIGHT = 3;
 	final static int LOWER_LEFT = 4;
@@ -24,16 +24,23 @@ public class Duck {
 	private float y;
 	private boolean isBorn;
 	private boolean isDead;
+	private boolean isOut;
+	private boolean selectedLastDirection;
 	private double delayAnimation;
 	private double delayChangeAnimation;
 	private int quack;
+	private int velocity;
 	public double delayQuack = 0.0d;
 	public double hit = 0.0d;
+	private double timeRemaining;
 	
-	public Duck() {
+	public Duck(int difficulty) {
 		quack = 1;
+		selectedLastDirection = false;
+		velocity = Duck.START_VELOCITY + difficulty;
 		delayAnimation = 0.0;
 		delayChangeAnimation = 0.0;
+		timeRemaining = 10.0d;
 		g = new DuckGraphic();
 		isDead = false;
 		spawn();
@@ -45,6 +52,7 @@ public class Duck {
 	
 	private void spawn() {
 		isBorn = true;
+		isOut = false;
 		originY = Background.MINIMUM_Y;
 		Random r = new Random();
 		x = r.nextInt(Background.MAXIMUM_X);
@@ -72,18 +80,26 @@ public class Duck {
 	}
 
 	public void move() {
+		timeRemaining -= Gdx.graphics.getDeltaTime();
+		if(timeRemaining <= 0.0d && !selectedLastDirection) {
+			selectedLastDirection = true;
+			Random r = new Random();
+			direction = r.nextInt(2) + 2;
+			g.setAnimations(direction);
+			delayAnimation = 0.0;
+		}
 		if(!isBorn) {
-			delayChangeAnimation += (double)Duck.VELOCITY/200;
+			delayChangeAnimation += (double)velocity/200;
 			if(direction == Duck.RIGHT) {
-				x += Gdx.graphics.getDeltaTime()*Duck.VELOCITY;
-				if(x >= Background.MAXIMUM_X && delayChangeAnimation > 6) {
+				x += Gdx.graphics.getDeltaTime()*velocity;
+				if(x >= Background.MAXIMUM_X && delayChangeAnimation > 4) {
 					selectDirection(new Random());
 					g.setAnimations(direction);
 					delayChangeAnimation = 0.0;
 				}
 			}
 			if(direction == Duck.LEFT) {
-				x -= Gdx.graphics.getDeltaTime()*Duck.VELOCITY;
+				x -= Gdx.graphics.getDeltaTime()*velocity;
 				if(x <= Background.MINIMUM_X && delayChangeAnimation > 4) {
 					selectDirection(new Random());
 					g.setAnimations(direction);
@@ -91,26 +107,30 @@ public class Duck {
 				}
 			}
 			if(direction == Duck.TOP_LEFT) {
-				x -= Gdx.graphics.getDeltaTime()*Duck.VELOCITY;
-				y += Gdx.graphics.getDeltaTime()*Duck.VELOCITY;
-				if((x <= Background.MINIMUM_X || y >= Duck.MAXIMUM_Y) && delayChangeAnimation > 4) {
+				x -= Gdx.graphics.getDeltaTime()*velocity;
+				y += Gdx.graphics.getDeltaTime()*velocity;
+				if((x <= Background.MINIMUM_X || y >= Duck.MAXIMUM_Y) && delayChangeAnimation > 4 && timeRemaining > 0.0d) {
 					selectDirection(new Random());
 					g.setAnimations(direction);
 					delayChangeAnimation = 0.0;
 				}
+				else if((x < 0 || y > Gdx.graphics.getHeight()) && timeRemaining <= 0.0d)
+					isOut = true;
 			}
 			if(direction == Duck.TOP_RIGHT) {
-				x += Gdx.graphics.getDeltaTime()*Duck.VELOCITY;
-				y += Gdx.graphics.getDeltaTime()*Duck.VELOCITY;
-				if((x >= Background.MAXIMUM_X || y >= Duck.MAXIMUM_Y) && delayChangeAnimation > 4) {
+				x += Gdx.graphics.getDeltaTime()*velocity;
+				y += Gdx.graphics.getDeltaTime()*velocity;
+				if((x >= Background.MAXIMUM_X || y >= Duck.MAXIMUM_Y) && delayChangeAnimation > 4 && timeRemaining > 0.0d) {
 					selectDirection(new Random());
 					g.setAnimations(direction);
 					delayChangeAnimation = 0.0;
 				}
+				else if((x < 0 || y > Gdx.graphics.getHeight()) && timeRemaining <= 0.0d)
+					isOut = true;
 			}
 			if(direction == Duck.LOWER_LEFT) {
-				x -= Gdx.graphics.getDeltaTime()*Duck.VELOCITY;
-				y -= Gdx.graphics.getDeltaTime()*Duck.VELOCITY;
+				x -= Gdx.graphics.getDeltaTime()*velocity;
+				y -= Gdx.graphics.getDeltaTime()*velocity;
 				if((x <= Background.MINIMUM_X || y <= Background.MINIMUM_Y + 20) && delayChangeAnimation > 4) {
 					selectDirection(new Random());
 					g.setAnimations(direction);
@@ -118,8 +138,8 @@ public class Duck {
 				}
 			}
 			if(direction == Duck.LOWER_RIGHT) {
-				x += Gdx.graphics.getDeltaTime()*Duck.VELOCITY;
-				y -= Gdx.graphics.getDeltaTime()*Duck.VELOCITY;
+				x += Gdx.graphics.getDeltaTime()*velocity;
+				y -= Gdx.graphics.getDeltaTime()*velocity;
 				if((x >= Background.MAXIMUM_X || y <= Background.MINIMUM_Y) && delayChangeAnimation > 4) {
 					selectDirection(new Random());
 					g.setAnimations(direction);
@@ -129,12 +149,12 @@ public class Duck {
 		}
 		else {
 			if(originY < y) {
-				originY += Gdx.graphics.getDeltaTime()*Duck.VELOCITY;
+				originY += Gdx.graphics.getDeltaTime()*velocity;
 			}
 			else
 				isBorn = false;
 		}
-		delayAnimation += (double)Duck.VELOCITY/200;
+		delayAnimation += (double)velocity/200;
 		if(delayAnimation > 5.0f) {
 			if(++quack > 3)
 				quack = 1;
@@ -162,15 +182,19 @@ public class Duck {
 	public boolean fall() {//restituisce true se deve ancora cadere
 		quack = 0;
 		if(isBorn) {
-			originY -= Gdx.graphics.getDeltaTime()*Duck.VELOCITY*2;
+			originY -= Gdx.graphics.getDeltaTime()*velocity*2;
 			if(originY > Background.MINIMUM_Y - 40)
 				return false;
 			return true;
 		}
-		y -= Gdx.graphics.getDeltaTime()*Duck.VELOCITY*2;
+		y -= Gdx.graphics.getDeltaTime()*velocity*2;
 		if(y > Background.MINIMUM_Y - 40)
 			return false;
 		return true;
+	}
+	
+	public boolean isOut() {
+		return isOut;
 	}
 	
 	public Texture fallAnimation() {

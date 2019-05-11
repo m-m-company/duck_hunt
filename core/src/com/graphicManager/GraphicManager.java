@@ -19,6 +19,7 @@ public class GraphicManager {
 	private final static int START_X_AMMO = 30;
 	private final static int Y_AMMO = 5;
 	private final static int Y_SCORE = 40;
+	private final static int Y_LEVEL_STRING = GraphicManager.Y_SCORE;
 	
 	private SpriteBatch batch;
 	private ShapeRenderer sh;
@@ -28,6 +29,7 @@ public class GraphicManager {
     private BitmapFont font;
     private Texture bullet;
     private int xScore;
+    private int xLevelString;
     private int width;
     private int height;
 	
@@ -44,6 +46,7 @@ public class GraphicManager {
         parameter.color = Color.BLACK;
         bullet = new Texture(Gdx.files.internal("background/ammo.png"));
         xScore = GraphicManager.START_X_AMMO + Game.AMMO*bullet.getWidth() + 100;
+        xLevelString = xScore + 150;
         width = Gdx.graphics.getWidth();
         height = Gdx.graphics.getHeight();
 	}
@@ -76,11 +79,13 @@ public class GraphicManager {
 		batch.end();
 	}
 	
-	public void drawBack(Background background, int score, int ammo) {
+	public void drawBack(Background background, int score, int ammo, int level) {
 		batch.begin();
 		batch.draw(background.getBack(), 0, 0);
-		this.drawScore(score);
 		this.drawAmmo(ammo);
+		font = generator.generateFont(parameter);
+		this.drawScore(score);
+		this.drawLevel(level);
 		batch.end();
 		font.dispose();
 		this.drawAmmoBorder();
@@ -92,7 +97,6 @@ public class GraphicManager {
 	}
 	
 	private void drawScore(int score) {
-		font = generator.generateFont(parameter);
 		font.draw(batch, Integer.toString(score), this.xScore, GraphicManager.Y_SCORE);
 	}
 	
@@ -101,6 +105,10 @@ public class GraphicManager {
 		sh.setColor(Color.BLACK);
 		sh.rect(GraphicManager.START_X_AMMO, GraphicManager.Y_AMMO, bullet.getWidth()*Game.AMMO, bullet.getHeight());
 		sh.end();
+	}
+	
+	private void drawLevel(int level) {
+		font.draw(batch, "LEVEL " + level, this.xLevelString, GraphicManager.Y_LEVEL_STRING);
 	}
 	
 	public void dispose() {
