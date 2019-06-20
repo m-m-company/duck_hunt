@@ -28,8 +28,11 @@ public class GraphicManager {
     private FreeTypeFontGenerator.FreeTypeFontParameter parameter;
     private BitmapFont font;
     private Texture bullet;
+    private Texture playMenu;
+    private Texture quitMenu;
     private int xScore;
     private int xLevelString;
+    private int xLifeString;
     private int width;
     private int height;
 	
@@ -45,8 +48,11 @@ public class GraphicManager {
 		parameter.size = 40;
         parameter.color = Color.BLACK;
         bullet = new Texture(Gdx.files.internal("background/ammo.png"));
-        xScore = GraphicManager.START_X_AMMO + Game.AMMO*bullet.getWidth() + 100;
-        xLevelString = xScore + 150;
+        playMenu = new Texture(Gdx.files.internal("menu/playMenu.jpg"));
+        quitMenu = new Texture(Gdx.files.internal("menu/quitMenu.jpg"));
+        xScore = GraphicManager.START_X_AMMO + Game.AMMO*bullet.getWidth() + 60;
+        xLevelString = xScore + 100;
+        xLifeString = xLevelString + 200;
         width = Gdx.graphics.getWidth();
         height = Gdx.graphics.getHeight();
 	}
@@ -79,16 +85,26 @@ public class GraphicManager {
 		batch.end();
 	}
 	
-	public void drawBack(Background background, int score, int ammo, int level) {
+	public void drawBack(Background background, int score, int ammo, int level, int life) {
 		batch.begin();
 		batch.draw(background.getBack(), 0, 0);
 		this.drawAmmo(ammo);
 		font = generator.generateFont(parameter);
 		this.drawScore(score);
 		this.drawLevel(level);
+		this.drawLostDucks(life);
 		batch.end();
 		font.dispose();
 		this.drawAmmoBorder();
+	}
+	
+	public void drawMenu(int status) {
+		batch.begin();
+		if(status == Game.PLAY_STATUS)
+			batch.draw(playMenu, 0, 0, width, height);
+		else if(status == Game.QUIT_STATUS)
+			batch.draw(quitMenu, 0, 0, width, height);
+		batch.end();	
 	}
 	
 	private void drawAmmo(int ammo) {
@@ -109,6 +125,10 @@ public class GraphicManager {
 	
 	private void drawLevel(int level) {
 		font.draw(batch, "LEVEL " + level, this.xLevelString, GraphicManager.Y_LEVEL_STRING);
+	}
+	
+	private void drawLostDucks(int life) {
+		font.draw(batch, "LIFE " + life, this.xLifeString, GraphicManager.Y_LEVEL_STRING);
 	}
 	
 	public void dispose() {
