@@ -2,13 +2,13 @@ package com.duck;
 
 import java.util.Random;
 
-import com.background.Background;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.Texture;
+import com.manager.GraphicManager;
 
 public class Duck {
 	
-	final static int MAXIMUM_Y = Background.MAXIMUM_Y - 95;
+	final static int MAXIMUM_Y = GraphicManager.MAXIMUM_Y - 95;
 	final static int RIGHT = 0;
 	final static int LEFT = 1;
 	final static int START_VELOCITY = 50;
@@ -53,12 +53,12 @@ public class Duck {
 	private void spawn() {
 		isBorn = true;
 		isOut = false;
-		originY = Background.MINIMUM_Y;
+		originY = GraphicManager.MINIMUM_Y;
 		Random r = new Random();
-		x = r.nextInt(Background.MAXIMUM_X);
-		y = r.nextInt(Background.MAXIMUM_Y - 100);
-		while(y < Background.MINIMUM_Y)
-			y = r.nextInt(Background.MAXIMUM_Y - 100);
+		x = r.nextInt(GraphicManager.MAXIMUM_X);
+		y = r.nextInt(GraphicManager.MAXIMUM_Y - 100);
+		while(y < GraphicManager.MINIMUM_Y)
+			y = r.nextInt(GraphicManager.MAXIMUM_Y - 100);
 		direction = r.nextInt(4);
 		while(direction < 2)
 			direction = r.nextInt(4);
@@ -92,7 +92,7 @@ public class Duck {
 			delayChangeAnimation += (double)velocity/200;
 			if(direction == Duck.RIGHT) {
 				x += Gdx.graphics.getDeltaTime()*velocity;
-				if(x >= Background.MAXIMUM_X && delayChangeAnimation > 4) {
+				if(x >= GraphicManager.MAXIMUM_X && delayChangeAnimation > 4) {
 					selectDirection(new Random());
 					g.setAnimations(direction);
 					delayChangeAnimation = 0.0;
@@ -100,7 +100,7 @@ public class Duck {
 			}
 			if(direction == Duck.LEFT) {
 				x -= Gdx.graphics.getDeltaTime()*velocity;
-				if(x <= Background.MINIMUM_X && delayChangeAnimation > 4) {
+				if(x <= GraphicManager.MINIMUM_X && delayChangeAnimation > 4) {
 					selectDirection(new Random());
 					g.setAnimations(direction);
 					delayChangeAnimation = 0.0;
@@ -109,7 +109,7 @@ public class Duck {
 			if(direction == Duck.TOP_LEFT) {
 				x -= Gdx.graphics.getDeltaTime()*velocity;
 				y += Gdx.graphics.getDeltaTime()*velocity;
-				if((x <= Background.MINIMUM_X || y >= Duck.MAXIMUM_Y) && delayChangeAnimation > 4 && timeRemaining > 0.0d) {
+				if((x <= GraphicManager.MINIMUM_X || y >= Duck.MAXIMUM_Y) && delayChangeAnimation > 4 && timeRemaining > 0.0d) {
 					selectDirection(new Random());
 					g.setAnimations(direction);
 					delayChangeAnimation = 0.0;
@@ -120,7 +120,7 @@ public class Duck {
 			if(direction == Duck.TOP_RIGHT) {
 				x += Gdx.graphics.getDeltaTime()*velocity;
 				y += Gdx.graphics.getDeltaTime()*velocity;
-				if((x >= Background.MAXIMUM_X || y >= Duck.MAXIMUM_Y) && delayChangeAnimation > 4 && timeRemaining > 0.0d) {
+				if((x >= GraphicManager.MAXIMUM_X || y >= Duck.MAXIMUM_Y) && delayChangeAnimation > 4 && timeRemaining > 0.0d) {
 					selectDirection(new Random());
 					g.setAnimations(direction);
 					delayChangeAnimation = 0.0;
@@ -131,7 +131,7 @@ public class Duck {
 			if(direction == Duck.LOWER_LEFT) {
 				x -= Gdx.graphics.getDeltaTime()*velocity;
 				y -= Gdx.graphics.getDeltaTime()*velocity;
-				if((x <= Background.MINIMUM_X || y <= Background.MINIMUM_Y + 20) && delayChangeAnimation > 4) {
+				if((x <= GraphicManager.MINIMUM_X || y <= GraphicManager.MINIMUM_Y + 20) && delayChangeAnimation > 4) {
 					selectDirection(new Random());
 					g.setAnimations(direction);
 					delayChangeAnimation = 0.0;
@@ -140,7 +140,7 @@ public class Duck {
 			if(direction == Duck.LOWER_RIGHT) {
 				x += Gdx.graphics.getDeltaTime()*velocity;
 				y -= Gdx.graphics.getDeltaTime()*velocity;
-				if((x >= Background.MAXIMUM_X || y <= Background.MINIMUM_Y) && delayChangeAnimation > 4) {
+				if((x >= GraphicManager.MAXIMUM_X || y <= GraphicManager.MINIMUM_Y) && delayChangeAnimation > 4) {
 					selectDirection(new Random());
 					g.setAnimations(direction);
 					delayChangeAnimation = 0.0;
@@ -183,12 +183,12 @@ public class Duck {
 		quack = 0;
 		if(isBorn) {
 			originY -= Gdx.graphics.getDeltaTime()*velocity*2;
-			if(originY > Background.MINIMUM_Y - 40)
+			if(originY > GraphicManager.MINIMUM_Y - 40)
 				return false;
 			return true;
 		}
 		y -= Gdx.graphics.getDeltaTime()*velocity*2;
-		if(y > Background.MINIMUM_Y - 40)
+		if(y > GraphicManager.MINIMUM_Y - 40)
 			return false;
 		return true;
 	}
