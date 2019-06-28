@@ -46,7 +46,7 @@ public class GraphicManager {
 		batch = new SpriteBatch();
 		sh = new ShapeRenderer();
 		pm = new Pixmap(Gdx.files.internal("mouse/cursor.png"));
-		Gdx.graphics.setCursor(Gdx.graphics.newCursor(pm, 0, 0));
+		setHiddenMouse();
 		generator = new FreeTypeFontGenerator(Gdx.files.internal("background/font.ttf"));
 		parameter = new FreeTypeFontGenerator.FreeTypeFontParameter();
 		font = new BitmapFont();
@@ -61,6 +61,15 @@ public class GraphicManager {
         xLifeString = xLevelString;
         width = Gdx.graphics.getWidth();
         height = Gdx.graphics.getHeight();
+	}
+	
+	public void setShootingMouse() {
+		Gdx.input.setCursorCatched(false);
+		Gdx.graphics.setCursor(Gdx.graphics.newCursor(pm, 0, 0));
+	}
+	
+	public void setHiddenMouse() {
+		Gdx.input.setCursorCatched(true);
 	}
 	
 	public float getFactorWidth() {

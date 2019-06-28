@@ -64,6 +64,7 @@ public class GameManager extends ApplicationAdapter {
 			if(status == GameManager.PLAY_STATUS) {
 				sound.restartBackground();
 				menu = false;
+				graphic.setShootingMouse();
 				createDucks();
 			}
 			else if(status == GameManager.QUIT_STATUS)
@@ -122,6 +123,7 @@ public class GameManager extends ApplicationAdapter {
 		life = 5;
 		status = GameManager.PLAY_STATUS;
 		menu = true;
+		graphic.setHiddenMouse();
 		ducks = new ArrayList<Duck>();
 	}
 	
