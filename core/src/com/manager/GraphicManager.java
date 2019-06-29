@@ -2,6 +2,7 @@ package com.manager;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.Color;
+import com.badlogic.gdx.graphics.Cursor.SystemCursor;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.Pixmap;
 import com.badlogic.gdx.graphics.Texture;
@@ -64,12 +65,11 @@ public class GraphicManager {
 	}
 	
 	public void setShootingMouse() {
-		Gdx.input.setCursorCatched(false);
 		Gdx.graphics.setCursor(Gdx.graphics.newCursor(pm, 0, 0));
 	}
 	
 	public void setHiddenMouse() {
-		Gdx.input.setCursorCatched(true);
+		Gdx.graphics.setSystemCursor(SystemCursor.Hand);
 	}
 	
 	public float getFactorWidth() {
