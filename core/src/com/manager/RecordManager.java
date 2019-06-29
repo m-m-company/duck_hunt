@@ -2,6 +2,11 @@ package com.manager;
 
 import java.util.Map;
 
+/* Questa classe gestisce il sistema di punteggi di pandoras jar.
+ * Vengono lette le variabili d'ambiente che il gestionale inietta nel gioco.
+ * Grazie ad esse il gioco sa qual è il punteggio più alto e chi l'ha fatto
+ */
+
 public class RecordManager {
 	
 	private Map<String, String> map;

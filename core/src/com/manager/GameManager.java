@@ -52,6 +52,7 @@ public class GameManager extends ApplicationAdapter {
 		}
 	}
 	
+	//Qui viene gestito il menu con i suoi input
 	private void menuManager() {
 		graphic.drawMenu(status);
 		if(status == GameManager.PLAY_STATUS && (Gdx.input.isKeyJustPressed(Input.Keys.UP) || Gdx.input.isKeyJustPressed(Input.Keys.DOWN)))
@@ -72,6 +73,7 @@ public class GameManager extends ApplicationAdapter {
 		}
 	}
 	
+	//vengono create sempre 3 duck
 	private void createDucks() {
 		++level;
 		for(int i = 0; i < 3; ++i)
@@ -79,6 +81,7 @@ public class GameManager extends ApplicationAdapter {
 		ammo = GameManager.AMMO;
 	}
 	
+	//metodo che gestisce l'input del gioco
 	private void inputControl() {
 		if(Gdx.input.isKeyJustPressed(Input.Keys.ESCAPE))
 			this.reset();
@@ -112,6 +115,7 @@ public class GameManager extends ApplicationAdapter {
 		}
 	}
 	
+	//viene chiamato ogni volta si esce dal gioco e si torna dal menu
 	private void reset() {
 		sound.restartBackground();
 		rechargeTime = 0.0d;
@@ -127,6 +131,7 @@ public class GameManager extends ApplicationAdapter {
 		ducks = new ArrayList<Duck>();
 	}
 	
+	//metodo che gestisce il suono delle papere e la caduta di quest'ultime
 	private void ducksManager() {
 		for(int i = 0; i < ducks.size(); ++i) {
 			graphic.drawDuck(ducks.get(i));

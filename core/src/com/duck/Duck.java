@@ -9,13 +9,15 @@ import com.manager.GraphicManager;
 public class Duck {
 	
 	final static int MAXIMUM_Y = GraphicManager.MAXIMUM_Y - 95;
+	//codifica delle direzioni
 	final static int RIGHT = 0;
 	final static int LEFT = 1;
-	final static int START_VELOCITY = 50;
 	final static int TOP_LEFT = 2;
 	final static int TOP_RIGHT = 3;
 	final static int LOWER_LEFT = 4;
 	final static int LOWER_RIGHT = 5;
+	//velocità iniziale
+	final static int START_VELOCITY = 50;
 	
 	private DuckGraphic g;
 	private int direction;
@@ -46,10 +48,12 @@ public class Duck {
 		spawn();
 	}
 	
+	//viene generata randomicamente la direzione della papera
 	private void selectDirection(Random r) {
 		direction = r.nextInt(g.getMaximumDirections());
 	}
 	
+	//spawn della papera
 	private void spawn() {
 		isBorn = true;
 		isOut = false;
@@ -65,6 +69,7 @@ public class Duck {
 		g.setAnimations(direction);
 	}
 	
+	//ritorna il frame attuale
 	public Texture getFrame() {
 		return g.getFrame();
 	}
@@ -79,6 +84,7 @@ public class Duck {
 		return y;
 	}
 
+	//gestisce il movimento
 	public void move() {
 		timeRemaining -= Gdx.graphics.getDeltaTime();
 		if(timeRemaining <= 0.0d && !selectedLastDirection) {

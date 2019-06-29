@@ -43,7 +43,6 @@ public class GraphicManager {
     private int height;
 	
 	public GraphicManager() {
-		//Gdx.graphics.setWindowedMode(800, 600);
 		batch = new SpriteBatch();
 		sh = new ShapeRenderer();
 		pm = new Pixmap(Gdx.files.internal("mouse/cursor.png"));

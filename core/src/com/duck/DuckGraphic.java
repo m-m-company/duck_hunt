@@ -3,6 +3,7 @@ package com.duck;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.utils.Queue;
 
+//le animazioni vengono gestite all'interno di un array
 public class DuckGraphic {
 
 	private String directions[] = {"right", "left", "topLeft", "topRight", "lowerLeft", "lowerRight"};
